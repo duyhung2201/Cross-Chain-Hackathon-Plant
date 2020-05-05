@@ -9,20 +9,21 @@ export default harden(({ publicAPI, http }, _inviteMaker) => {
   // publish/subscribe.
   const subChannelHandles = new Set();
 
-  const sendToSubscribers = obj => {
-    E(http).send(obj, [...subChannelHandles.keys()])
-      .catch(e => console.error('cannot send', e));
+  const sendToSubscribers = (obj) => {
+    E(http)
+      .send(obj, [...subChannelHandles.keys()])
+      .catch((e) => console.error('cannot send', e));
   };
 
-  const fail = e => {
+  const fail = (e) => {
     const obj = {
       type: 'encouragement/encouragedError',
-      data: (e && e.message) || e
+      data: (e && e.message) || e,
     };
     sendToSubscribers(obj);
   };
 
-  const doOneNotification = updateResponse => {
+  const doOneNotification = (updateResponse) => {
     // Publish to our subscribers.
     const obj = {
       type: 'encouragement/encouragedResponse',
@@ -60,7 +61,6 @@ export default harden(({ publicAPI, http }, _inviteMaker) => {
           // These are messages we receive from either POST or WebSocket.
           switch (obj.type) {
             case 'encouragement/getEncouragement': {
-              
               return harden({
                 type: 'encouragement/getEncouragementResponse',
                 instanceRegKey: undefined,
@@ -69,7 +69,6 @@ export default harden(({ publicAPI, http }, _inviteMaker) => {
             }
 
             case 'encouragement/subscribeNotifications': {
-              
               return harden({
                 type: 'encouragement/subscribeNotificationsResponse',
                 data: true,
